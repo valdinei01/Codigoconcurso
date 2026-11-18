@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1130">
+<title>Código do Concurso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1130; --ink2:#10183D; --paper:#172152; --paper2:#1F2A62; --line:#2C3A7A;
+  --txt:#F3F1FF; --mut:#A4ABD3; --mark:#FFE14D; --ok:#3EE0B5; --warn:#FFB547; --bad:#FF7A6B;
+  --disp:"Bricolage Grotesque",system-ui,sans-serif; --body:"Figtree",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--body);font-size:16px;line-height:1.5;color:var(--txt);background-color:var(--ink);
+  background-image:radial-gradient(ellipse 90% 50% at 50% -10%,rgba(255,225,77,.10),transparent 70%),
+  linear-gradient(rgba(164,171,211,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(164,171,211,.045) 1px,transparent 1px);
+  background-size:auto,24px 24px,24px 24px;background-attachment:fixed;min-height:100vh;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--mark)}
+:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+h1,h2,h3{font-family:var(--disp);margin:0;line-height:1.1;letter-spacing:-.02em}
+h1{font-size:34px;font-weight:800}h2{font-size:24px;font-weight:800}h3{font-size:18px;font-weight:700}
+p{margin:.4em 0}
+.mut{color:var(--mut)} .sm{font-size:14px} .xs{font-size:12.5px}
+main{max-width:640px;margin:0 auto;padding:12px 16px calc(110px + env(safe-area-inset-bottom))}
+
+/* topo */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+  background:rgba(11,17,48,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(44,58,122,.6)}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:-.02em;white-space:nowrap}
+.mk{width:30px;height:30px;border-radius:8px 8px 8px 2px;background:var(--mark);color:var(--ink);display:grid;place-items:center;font-size:15px;font-weight:800;transform:rotate(-4deg)}
+.top .cz{margin-left:auto;font-size:12.5px;color:var(--mut);max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+
+/* superfícies */
+.panel{background:linear-gradient(180deg,rgba(31,42,98,.9),rgba(23,33,82,.9));border:1px solid var(--line);border-radius:22px;padding:18px;margin:14px 0;position:relative}
+.panel.flat{background:rgba(23,33,82,.55)}
+.sec-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:26px 2px 10px}
+.sec-t h2{font-size:21px}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:13px 18px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;
+  background:var(--mark);color:var(--ink);transition:transform .12s ease,filter .12s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+.btn.soft{background:var(--paper2);color:var(--txt)}
+.btn.small{padding:8px 12px;font-size:13.5px;border-radius:11px}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.5}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+/* status */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--paper2);border:1px solid var(--line);white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-aberto{color:var(--ok);border-color:rgba(62,224,181,.4);background:rgba(62,224,181,.1)}
+.st-edital{color:var(--mark);border-color:rgba(255,225,77,.4);background:rgba(255,225,77,.08)}
+.st-prev{color:var(--warn);border-color:rgba(255,181,71,.4);background:rgba(255,181,71,.08)}
+.st-off{color:var(--mut)}
+
+/* régua de aprovação (elemento-assinatura) */
+.ruler{position:relative;height:74px;margin:22px 4px 6px}
+.ruler .track{position:absolute;left:0;right:0;top:38px;height:12px;border-radius:6px;background:repeating-linear-gradient(90deg,rgba(164,171,211,.35) 0 1px,transparent 1px 10%),#0E1640;border:1px solid var(--line)}
+.ruler .fill{position:absolute;left:0;top:38px;height:12px;border-radius:6px;width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.ruler .cut{position:absolute;top:26px;bottom:6px;width:0;border-left:2px dashed var(--mark)}
+.ruler .cut span{position:absolute;top:44px;left:-30px;width:60px;text-align:center;font-size:11.5px;color:var(--mark);font-weight:600}
+.ruler .me{position:absolute;top:0;transform:translateX(-50%);left:0;transition:left 1.1s cubic-bezier(.2,.8,.2,1);font-family:var(--disp);font-weight:800;font-size:13px;padding:3px 9px;border-radius:8px;color:var(--ink);white-space:nowrap}
+.ruler .me:after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:inherit}
+.ruler .scale{position:absolute;left:0;right:0;top:56px;display:flex;justify-content:space-between;font-size:10.5px;color:var(--mut)}
+.big{font-family:var(--disp);font-weight:800;font-size:56px;line-height:.95;letter-spacing:-.04em}
+.big small{font-size:22px;letter-spacing:-.01em}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.kv div{background:rgba(11,17,48,.5);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.kv b{display:block;font-family:var(--disp);font-size:19px}
+.kv span{font-size:12.5px;color:var(--mut)}
+
+/* passos recomendados */
+.step{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-top:1px solid rgba(44,58,122,.7)}
+.step:first-child{border-top:0;padding-top:4px}
+.dot{flex:none;width:10px;height:10px;border-radius:3px;margin-top:7px;transform:rotate(45deg)}
+.step b{font-weight:700}
+.step .btn{margin-top:8px}
+
+/* barras de matéria */
+.mrow{padding:12px 0;border-top:1px solid rgba(44,58,122,.6)}
+.mrow:first-of-type{border-top:0}
+.bar{height:8px;border-radius:5px;background:#0E1640;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;border-radius:5px}
+
+/* mapa de assuntos */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{border:1px solid var(--line);background:rgba(11,17,48,.45);color:var(--txt);border-radius:999px;padding:7px 12px;font-size:13.5px;text-align:left;cursor:pointer;line-height:1.3;max-width:100%}
+.chip.none{border-style:dashed;color:var(--mut)}
+.chip.bad{background:rgba(255,122,107,.14);border-color:rgba(255,122,107,.55)}
+.chip.mid{background:rgba(255,181,71,.13);border-color:rgba(255,181,71,.5)}
+.chip.good{background:rgba(62,224,181,.13);border-color:rgba(62,224,181,.5)}
+.chip em{font-style:normal;font-weight:700;margin-left:6px;font-size:12px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+.legend span.nd:before{background:none;border:1px dashed var(--mut);width:7px;height:7px}
+
+/* formulários */
+label.f{display:block;font-size:13px;color:var(--mut);margin:14px 0 6px;font-weight:500}
+input,select,textarea{width:100%;background:rgba(11,17,48,.7);border:1px solid var(--line);border-radius:13px;padding:13px 14px;font-size:16px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--mark)}
+.search{display:flex;gap:8px}
+.search input{flex:1}
+.search select{width:88px;flex:none}
+
+/* resultado de busca */
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;margin-top:14px}
+.facts div span{display:block;font-size:12px;color:var(--mut)}
+.facts div b{font-weight:600;font-size:15px}
+.mat{padding:12px 0;border-top:1px solid rgba(44,58,122,.6)}
+.list-item{display:block;width:100%;text-align:left;background:rgba(11,17,48,.45);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;cursor:pointer;color:var(--txt)}
+.src a{display:block;font-size:13px;color:var(--mut);text-decoration:none;padding:5px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.src a:before{content:"↗ ";color:var(--mark)}
+
+/* questões */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.prog{height:4px;background:#0E1640;border-radius:3px;margin:12px 0 4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--mark);transition:width .3s}
+.qtext{font-size:17.5px;line-height:1.55;margin:14px 0 6px;white-space:pre-line}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:rgba(11,17,48,.5);border:1px solid var(--line);border-radius:15px;padding:13px 14px;margin:9px 0;font-size:15.5px;color:var(--txt);cursor:pointer;line-height:1.45}
+.opt .l{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--mut);display:grid;place-items:center;font-size:13px;font-weight:700;font-family:var(--disp)}
+.opt.right{border-color:var(--ok);background:rgba(62,224,181,.12)}.opt.right .l{background:var(--ok);border-color:var(--ok);color:var(--ink)}
+.opt.wrong{border-color:var(--bad);background:rgba(255,122,107,.12)}.opt.wrong .l{background:var(--bad);border-color:var(--bad);color:var(--ink)}
+.expl{border-left:3px solid var(--mark);padding:4px 0 4px 12px;margin:14px 0 4px}
+
+/* navegação */
+nav.tabs{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));max-width:620px;margin:0 auto;z-index:30;display:flex;
+  background:rgba(16,24,61,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:22px;padding:6px}
+nav.tabs button{flex:1;background:none;border:0;border-radius:16px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--mut);cursor:pointer}
+nav.tabs svg{width:22px;height:22px}
+nav.tabs button.on{background:var(--mark);color:var(--ink)}
+
+/* modal e toast */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(5,8,26,.7);display:flex;align-items:flex-end;justify-content:center;animation:fade .18s}
+.sheet{width:100%;max-width:640px;max-height:90vh;overflow:auto;background:var(--ink2);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));animation:up .22s cubic-bezier(.2,.8,.2,1)}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:-6px auto 14px}
+.toast{position:fixed;top:calc(14px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:90;background:var(--paper2);border:1px solid var(--mark);padding:12px 16px;border-radius:14px;max-width:92vw;font-size:14.5px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+
+/* carregando */
+.loader{text-align:center;padding:34px 10px}
+.scan{width:120px;height:150px;margin:0 auto 18px;border-radius:10px;background:#F3F1FF;position:relative;overflow:hidden;transform:rotate(-3deg)}
+.scan:before{content:"";position:absolute;inset:16px 14px;background:repeating-linear-gradient(180deg,#B9BEDD 0 4px,transparent 4px 13px)}
+.scan:after{content:"";position:absolute;left:8px;right:8px;height:14px;background:rgba(255,225,77,.8);mix-blend-mode:multiply;animation:scan 1.6s ease-in-out infinite alternate}
+@keyframes scan{from{top:14px}to{top:120px}}
+.loader b{font-family:var(--disp);font-size:19px;display:block}
+
+/* tela inicial */
+.hero{padding:42px 4px 10px}
+.hero h1{font-size:44px;line-height:1}
+.hl{background:var(--mark);color:var(--ink);padding:0 .18em;border-radius:.12em .3em .18em .35em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.gbtn{background:#fff;color:#1f1f1f}
+.empty{text-align:center;padding:28px 10px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><main><div class="loader"><b>Carregando…</b></div></main></div>
+<div id="modalBox"></div>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO
+   1) API_URL: endereço do servidor de IA (pasta /api). No Vercel, deixe "/api/ia".
+   2) FIREBASE_CONFIG: preencha para ativar o login com Google (veja o README).
+   ===================================================================== */
+const API_URL = "/api/ia";
+const FIREBASE_CONFIG = { apiKey:"", authDomain:"", projectId:"", appId:"" };
+
+/* ============================ DADOS ============================ */
+const UFS = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+
+const STATUS = {
+  inscricoes_abertas:{t:'Inscrições abertas',c:'st-aberto'},
+  edital_publicado:{t:'Edital publicado',c:'st-edital'},
+  previsto:{t:'Previsto',c:'st-prev'},
+  encerrado:{t:'Inscrições encerradas',c:'st-off'},
+  sem_previsao:{t:'Sem previsão',c:'st-off'}
+};
+
+// Ajuste de dificuldade por banca (multiplica seu aproveitamento estimado)
+const BANCA_F = [[/cebraspe|cespe/i,.88],[/fgv/i,.87],[/fcc|carlos chagas/i,.93],[/vunesp/i,.95],[/cesgranrio/i,.93],
+  [/selecon/i,.95],[/ibfc/i,.97],[/ibade/i,.97],[/aocp/i,.95],[/idecan/i,.95],[/consulplan/i,.96],[/fundatec/i,.93]];
+const bancaF = b => (BANCA_F.find(([r])=>r.test(b||''))||[0,.94])[1];
+
+// Exemplo real (dados do Edital nº 001/PMSG/2026) — usado quando a busca automática ainda não está ligada
+const EXEMPLO = {
+  encontrado:true, nome:'Guarda Municipal de São Gonçalo – Nível II', orgao:'Prefeitura de São Gonçalo (RJ)', cargo:'Guarda Municipal Nível II',
+  outros_cargos:['Guarda Municipal Nível III – Psicólogo'], uf:'RJ', status:'inscricoes_abertas', banca:'Instituto Selecon',
+  vagas:'100 + 500 em cadastro reserva', salario:'R$ 3.172,96', taxa:'R$ 95,18', escolaridade:'Nível médio + CNH AB',
+  inscricoes_inicio:'2026-09-28', inscricoes_fim:'2026-11-18', data_prova:'2027-01-24',
+  link_edital:'https://www.selecon.org.br', edital_referencia:'Edital nº 001/PMSG/2026',
+  nota_minima:'Mínimo de 50 dos 100 pontos, sem zerar nenhuma disciplina.', nota_corte_percentual:50,
+  materias:[
+    {nome:'Língua Portuguesa',questoes:15,pontos_por_questao:1,assuntos:['Compreensão e interpretação de textos','Tipologia e gêneros textuais','Concordância verbal e nominal','Crase','Pontuação','Coesão textual e conectores','Tempos e modos verbais','Coordenação e subordinação','Ortografia e acentuação','Redação oficial e reescrita']},
+    {nome:'Noções de Direito',questoes:20,pontos_por_questao:1,assuntos:['Direitos e garantias fundamentais','Administração Pública e servidores (arts. 37 a 41)','Princípios da Administração Pública','Crimes contra a pessoa, o patrimônio e a Administração','Crime: elementos, tentativa e concurso de pessoas','Inquérito policial, prisão e liberdade provisória','Atos administrativos e poder de polícia','Improbidade administrativa (Lei 8.429/92)','Juizados Especiais Criminais (Lei 9.099/95)','Princípios fundamentais da CF/88']},
+    {nome:'Legislação Extravagante',questoes:15,pontos_por_questao:1,assuntos:['Abuso de autoridade (Lei 13.869/19)','Estatuto do Desarmamento (Lei 10.826/03)','Lei Maria da Penha (Lei 11.340/06)','Lei de Drogas (11.343/06) e Organizações Criminosas (12.850/13)','Crimes hediondos (Lei 8.072/90)','Tortura (Lei 9.455/97)','ECA (Lei 8.069/90)','Código de Trânsito Brasileiro','Crimes ambientais (Lei 9.605/98)']},
+    {nome:'Conhecimentos Específicos',questoes:20,pontos_por_questao:2,assuntos:['Estatuto Geral das Guardas Municipais (Lei 13.022/14)','Estatuto da Guarda Municipal de São Gonçalo (Lei Mun. 1.625/26)','SUSP – Sistema Único de Segurança Pública (Lei 13.675/18)','Estatuto dos Servidores de São Gonçalo (Lei Mun. 1.416/22)']},
+    {nome:'Informática',questoes:10,pontos_por_questao:1,assuntos:['Segurança da informação, backup e antivírus','Internet, intranet e navegadores','Editores de texto, planilhas e apresentações','Windows e Linux','Redes e redes sem fio','E-mail e ferramentas de colaboração','Hardware e software','Criptografia e assinatura digital','Arquivos e formatos multimídia']}
+  ],
+  dicas_banca:['Conhecimentos Específicos valem o dobro: 40 dos 100 pontos estão nas leis da Guarda.','A prova tem 4 alternativas por questão; elimine as absurdas antes de decidir.','Legislação costuma vir na letra da lei: leia as leis secas do edital.'],
+  observacoes:'Prova objetiva com 80 questões em 4 horas. Inscrições até 23h59 de 18/11/2026 no site do Instituto Selecon.',
+  fontes:[{title:'Edital nº 001/PMSG/2026 (PDF)',uri:'https://www.editorasolucao.com.br/blog/wp-content/uploads/2026/09/Concurso-Guarda-de-Sao-Goncalo-RJ-Edital.pdf'},
+    {title:'Direção Concursos: inscrições abertas',uri:'https://www.direcaoconcursos.com.br/noticias/concurso-gcm-sao-goncalo-inscricoes-abertas'}]
+};
+
+// Banco interno (usado quando a IA não está disponível). "a" = assunto.
+const BANK = {
+  port:[
+    {a:'Crase',q:'Assinale a frase correta quanto ao uso da crase.',o:['Fui a farmácia comprar remédio.','Fui à farmácia comprar remédio.','Fui há farmácia comprar remédio.','Fui à pé até a farmácia.'],c:1,e:'"Ir a" + "a farmácia" = "à farmácia". Antes de palavra masculina ("pé") não há crase.'},
+    {a:'Concordância verbal e nominal',q:'Qual frase está de acordo com a norma-padrão?',o:['Fazem dois anos que não o vejo.','Haviam muitas pessoas na fila.','Faz dois anos que não o vejo.','Houveram problemas na prova.'],c:2,e:'"Fazer" indicando tempo e "haver" no sentido de existir são impessoais: ficam no singular.'},
+    {a:'Colocação pronominal',q:'Assinale a colocação pronominal correta.',o:['Não disseram-me nada.','Me disseram que a prova foi difícil.','Ninguém contou-lhe a verdade.','Não me disseram nada.'],c:3,e:'Palavras negativas atraem o pronome para antes do verbo (próclise). A norma-padrão não aceita pronome oblíquo no início da frase.'},
+    {a:'Pontuação',q:'Assinale a frase com pontuação correta.',o:['Os candidatos, estudaram muito.','Os candidatos estudaram muito, e passaram.','Em São Gonçalo, a prova será pela manhã.','A prova, será em janeiro.'],c:2,e:'Não se separa sujeito do verbo por vírgula. Adjunto adverbial deslocado no início pode ser separado por vírgula.'}
+  ],
+  rlm:[
+    {a:'Negação de proposições',q:'A negação de "Todo guarda é pontual" é:',o:['Nenhum guarda é pontual.','Algum guarda não é pontual.','Todo guarda é impontual.','Algum guarda é pontual.'],c:1,e:'Negar "Todo A é B" é afirmar "Algum A não é B".'},
+    {a:'Equivalências lógicas',q:'"Se chove, então a rua fica molhada" é equivalente a:',o:['Se a rua fica molhada, então chove.','Se não chove, a rua não fica molhada.','Se a rua não fica molhada, então não chove.','Chove e a rua não fica molhada.'],c:2,e:'Contrapositiva: P→Q equivale a ~Q→~P.'},
+    {a:'Porcentagem',q:'Um produto de R$ 250,00 teve desconto de 30%. Qual o valor do desconto?',o:['R$ 30,00','R$ 75,00','R$ 70,00','R$ 175,00'],c:1,e:'30% de 250 = 0,3 × 250 = 75.'}
+  ],
+  const:[
+    {a:'Princípios fundamentais da CF/88',q:'NÃO é fundamento da República Federativa do Brasil (art. 1º da CF):',o:['Soberania','Dignidade da pessoa humana','Pluralismo político','Garantir o desenvolvimento nacional'],c:3,e:'"Garantir o desenvolvimento nacional" é objetivo fundamental (art. 3º), não fundamento.'},
+    {a:'Direitos e garantias fundamentais',q:'O remédio constitucional que protege a liberdade de locomoção é o:',o:['Mandado de segurança','Habeas data','Habeas corpus','Mandado de injunção'],c:2,e:'Habeas corpus protege o direito de ir, vir e permanecer.'},
+    {a:'Direitos e garantias fundamentais',q:'Sem consentimento do morador, a casa pode ser invadida por determinação judicial:',o:['A qualquer hora','Somente durante o dia','Somente à noite','Nunca'],c:1,e:'Por ordem judicial, só durante o dia. Em flagrante, desastre ou para prestar socorro, a qualquer hora (art. 5º, XI).'}
+  ],
+  adm:[
+    {a:'Princípios da Administração Pública',q:'NÃO é princípio expresso no caput do art. 37 da CF:',o:['Legalidade','Moralidade','Razoabilidade','Eficiência'],c:2,e:'Os expressos formam o LIMPE: Legalidade, Impessoalidade, Moralidade, Publicidade e Eficiência.'},
+    {a:'Atos administrativos e poder de polícia',q:'A revogação de um ato administrativo ocorre por:',o:['Ilegalidade, com efeitos retroativos','Conveniência e oportunidade, com efeitos não retroativos (ex nunc)','Decisão exclusiva do Judiciário','Ilegalidade, com efeitos ex nunc'],c:1,e:'Revogação: mérito administrativo, efeitos para frente. Anulação: ilegalidade.'},
+    {a:'Atos administrativos e poder de polícia',q:'É atributo do ato administrativo:',o:['Presunção de legitimidade','Definitividade','Gratuidade','Vitaliciedade'],c:0,e:'Atributos: presunção de legitimidade, imperatividade, autoexecutoriedade e tipicidade.'}
+  ],
+  penal:[
+    {a:'Crime: elementos, tentativa e concurso de pessoas',q:'Há tentativa quando:',o:['O agente apenas planeja o crime','Iniciada a execução, o crime não se consuma por circunstâncias alheias à vontade do agente','O agente desiste voluntariamente','O crime é impossível'],c:1,e:'Art. 14, II, do CP. Desistir por vontade própria é desistência voluntária.'},
+    {a:'Crimes contra a pessoa, o patrimônio e a Administração',q:'Subtrair coisa alheia móvel mediante grave ameaça caracteriza:',o:['Furto','Roubo','Estelionato','Apropriação indébita'],c:1,e:'Roubo (art. 157) exige violência ou grave ameaça. Sem isso, é furto (art. 155).'},
+    {a:'Excludentes de ilicitude',q:'A legítima defesa exclui a:',o:['Culpabilidade','Tipicidade','Ilicitude','Punibilidade'],c:2,e:'Art. 23 do CP: excludentes de ilicitude.'}
+  ],
+  info:[
+    {a:'Segurança da informação, backup e antivírus',q:'Phishing é:',o:['Um tipo de backup','Uma fraude que imita uma entidade confiável para roubar dados','Um antivírus gratuito','Um protocolo de e-mail'],c:1,e:'O golpista se passa por banco, empresa ou órgão para obter senhas e dados.'},
+    {a:'Internet, intranet e navegadores',q:'O "https" e o cadeado no navegador indicam que:',o:['O site é do governo','A conexão é criptografada','O site não tem vírus','A página está offline'],c:1,e:'HTTPS criptografa a conexão, mas não garante que o site seja confiável.'},
+    {a:'Editores de texto, planilhas e apresentações',q:'No Excel, para somar as células de A1 até A3 usa-se:',o:['=SOMA(A1;A3)','=SOMA(A1:A3)','=A1+A3','SOMA[A1-A3]'],c:1,e:'":" indica intervalo; ";" somaria só A1 e A3.'}
+  ],
+  legext:[
+    {a:'Lei Maria da Penha (Lei 11.340/06)',q:'Segundo a Lei Maria da Penha, as relações pessoais nela enunciadas:',o:['Dependem de coabitação','Independem de orientação sexual','Aplicam-se apenas a casamentos civis','Exigem vínculo familiar de sangue'],c:1,e:'Art. 5º, parágrafo único: as relações independem de orientação sexual.'},
+    {a:'Crimes hediondos (Lei 8.072/90)',q:'Os crimes hediondos são insuscetíveis de:',o:['Progressão de regime','Anistia, graça, indulto e fiança','Liberdade provisória em qualquer caso','Recurso'],c:1,e:'Art. 2º da Lei 8.072/90.'},
+    {a:'ECA (Lei 8.069/90)',q:'Para o ECA, adolescente é a pessoa entre:',o:['10 e 16 anos','12 e 18 anos','12 e 21 anos','14 e 18 anos'],c:1,e:'Art. 2º: criança até 12 anos incompletos; adolescente entre 12 e 18 anos.'}
+  ],
+  gm:[
+    {a:'Estatuto Geral das Guardas Municipais (Lei 13.022/14)',q:'Segundo a Lei 13.022/2014, as guardas municipais são instituições de caráter:',o:['Militar','Civil','Policial militar','Paramilitar'],c:1,e:'Art. 2º: instituições de caráter civil, uniformizadas e armadas conforme previsto em lei.'},
+    {a:'Estatuto Geral das Guardas Municipais (Lei 13.022/14)',q:'Entre os requisitos básicos de investidura previstos na Lei 13.022/2014, está a idade mínima de:',o:['18 anos','21 anos','25 anos','Não há idade mínima'],c:0,e:'Art. 10: idade mínima de 18 anos, nível médio completo, entre outros.'},
+    {a:'Estatuto Geral das Guardas Municipais (Lei 13.022/14)',q:'Pela Lei 13.022/2014, os cargos em comissão das guardas municipais devem ser providos por:',o:['Qualquer pessoa de confiança do prefeito','Membros efetivos do quadro de carreira','Policiais militares cedidos','Servidores de qualquer órgão'],c:1,e:'Art. 15: cargos em comissão providos por membros efetivos do quadro de carreira.'}
+  ]
+};
+function bankTags(nome){
+  const n = (nome||'').toLowerCase(), t = [];
+  if (/portugu/.test(n)) t.push('port');
+  if (/inform/.test(n)) t.push('info');
+  if (/lógic|logic|matem|raciocín/.test(n)) t.push('rlm');
+  if (/constitu/.test(n)) t.push('const');
+  if (/administrativ/.test(n)) t.push('adm');
+  if (/penal/.test(n) && !/especial|extravag/.test(n)) t.push('penal');
+  if (/noç(õ|o)es de direito|^direito$/.test(n)) t.push('const','adm','penal');
+  if (/extravag|penal especial|legislação penal/.test(n)) t.push('legext');
+  if (/guarda|específic|especific/.test(n)) t.push('gm');
+  return [...new Set(t)];
+}
+
+/* ============================ UTILITÁRIOS ============================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const dstr = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today = () => dstr(new Date());
+const daysBetween = (a,b) => Math.round((new Date(b+'T12:00') - new Date(a+'T12:00'))/864e5);
+const uid = () => Math.random().toString(36).slice(2,10);
+const pct = x => Math.round(x*100);
+const fmtDate = s => s && /^\d{4}-\d{2}-\d{2}$/.test(s) ? s.split('-').reverse().join('/') : '';
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const gsearch = q => 'https://www.google.com/search?q='+encodeURIComponent(q);
+const accClass = a => a===null ? 'none' : a>=.7 ? 'good' : a>=.5 ? 'mid' : 'bad';
+const accColor = a => a===null ? 'var(--mut)' : a>=.7 ? 'var(--ok)' : a>=.5 ? 'var(--warn)' : 'var(--bad)';
+const attr = s => esc(JSON.stringify(s));
+const num = v => String(v).replace('.',',');
+const ICON = {
+  painel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg>',
+  mapa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
+  treinar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>',
+  buscar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  perfil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'
+};
+
+/* ============================ ARMAZENAMENTO ============================ */
+const firebaseOn = !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
+const Store = {
+  mode:'local', uid:'local', db:null, mem:{},
+  key(){ return 'cdc_state_'+this.uid; },
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return this.mem[k] ?? null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ this.mem[k]=v; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){ delete this.mem[k]; } },
+  async load(){
+    if (this.mode==='cloud'){
+      try{ const d = await this.db.collection('users').doc(this.uid).get(); if (d.exists && d.data().state) return JSON.parse(d.data().state); }
+      catch(e){ console.warn(e); }
+    }
+    try{ return JSON.parse(this.get(this.key())); }catch(e){ return null; }
+  },
+  save(st){
+    this.set(this.key(), JSON.stringify(st));
+    if (this.mode==='cloud'){
+      clearTimeout(this._t);
+      this._t = setTimeout(()=>this.db.collection('users').doc(this.uid).set({state:JSON.stringify(st),updatedAt:Date.now()}).catch(console.warn), 800);
+    }
+  }
+};
+
+let state=null, user=null, view='painel', quiz=null, search={busy:false,res:null,list:null,err:null};
+const save = () => Store.save(state);
+const C = () => state.concursos.find(c=>c.id===state.ativo);
+
+/* ============================ IA ============================ */
+async function api(action, payload){
+  const headers = {'Content-Type':'application/json'};
+  if (user) headers.Authorization = 'Bearer '+await user.getIdToken();
+  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 75000);
+  try{
+    const r = await fetch(API_URL, {method:'POST', headers, body:JSON.stringify({action,...payload}), signal:ctrl.signal});
+    const ct = r.headers.get('content-type')||'';
+    if (!ct.includes('json')) throw new Error('offline');
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Falha na busca');
+    return j;
+  } catch(e){
+    if (e.name==='AbortError') throw new Error('A busca demorou demais. Tente de novo.');
+    if (e.message==='offline' || e instanceof TypeError) throw new Error('offline');
+    throw e;
+  } finally { clearTimeout(to); }
+}
+
+/* ============================ LOGIN ============================ */
+const loadScript = src => new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+async function start(){
+  if (firebaseOn){
+    try{
+      const b='https://www.gstatic.com/firebasejs/10.12.2/';
+      await loadScript(b+'firebase-app-compat.js'); await loadScript(b+'firebase-auth-compat.js'); await loadScript(b+'firebase-firestore-compat.js');
+      firebase.initializeApp(FIREBASE_CONFIG); Store.db = firebase.firestore();
+      firebase.auth().onAuthStateChanged(async u=>{
+        if (u){ user=u; Store.mode='cloud'; Store.uid=u.uid; state=await Store.load(); boot(); }
+        else if (Store.get('cdc_mode')==='local') startLocal(); else renderWelcome();
+      });
+      return;
+    }catch(e){ console.warn('Firebase indisponível', e); }
+  }
+  Store.get('cdc_mode')==='local' ? startLocal() : renderWelcome();
+}
+async function startLocal(){ Store.set('cdc_mode','local'); Store.mode='local'; Store.uid='local'; user=null; state=await Store.load(); boot(); }
+async function googleLogin(){
+  const p = new firebase.auth.GoogleAuthProvider();
+  try{ await firebase.auth().signInWithPopup(p); }
+  catch(e){ if (/popup|not-supported/.test(e.code||'')) await firebase.auth().signInWithRedirect(p); else toast('Não foi possível entrar: '+e.message); }
+}
+function logout(){ ask('Sair da conta neste aparelho?', async ()=>{ Store.del('cdc_mode'); if (firebaseOn && user) await firebase.auth().signOut(); state=null; user=null; quiz=null; renderWelcome(); }); }
+
+function renderWelcome(){
+  $('#app').innerHTML = `<main><div class="hero">
+    <div class="logo" style="margin-bottom:34px"><span class="mk">C</span>Código do Concurso</div>
+    <h1>Descubra o que falta para a sua <span class="hl">aprovação</span>.</h1>
+    <p class="mut" style="font-size:17px;margin-top:16px">Digite o concurso que você quer. O app encontra o edital, mapeia as matérias e os assuntos e mostra exatamente onde você precisa melhorar.</p>
+  </div>
+  <div class="panel flat">
+    ${firebaseOn?`<button class="btn block gbtn" onclick="googleLogin()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Entrar com Google</button>
+    <button class="btn block ghost" style="margin-top:10px" onclick="startLocal()">Usar sem conta neste aparelho</button>`
+    :`<button class="btn block" onclick="startLocal()">Começar</button><p class="mut xs" style="margin:10px 2px 0">Seu progresso fica salvo neste aparelho.</p>`}
+  </div></main>`;
+}
+
+function boot(){
+  if (!state) state = { v:2, nome: user?.displayName?.split(' ')[0] || '', concursos:[], ativo:null, records:[], sessions:[] };
+  state.records ||= []; state.sessions ||= []; state.concursos ||= [];
+  if (!C()){ view='buscar'; }
+  render();
+}
+
+/* ============================ CONCURSO ============================ */
+function normalizaConcurso(r){
+  const materias = (r.materias||[]).filter(m=>m && m.nome).map((m,i)=>({
+    id:'m'+i+'_'+uid(), nome:m.nome, questoes:+m.questoes||0, ppq:+m.pontos_por_questao||1,
+    assuntos:(m.assuntos||[]).filter(Boolean).slice(0,14)
+  }));
+  return { id:uid(), criado:today(), atualizado:today(), nome:r.nome||'Concurso', orgao:r.orgao||'', cargo:r.cargo||'', outros_cargos:r.outros_cargos||[],
+    uf:r.uf||'', status:r.status||'sem_previsao', banca:r.banca||'A definir', vagas:r.vagas||'', salario:r.salario||'', taxa:r.taxa||'',
+    escolaridade:r.escolaridade||'', inscricoes_inicio:r.inscricoes_inicio||'', inscricoes_fim:r.inscricoes_fim||'', data_prova:r.data_prova||'',
+    link_edital:r.link_edital||'', edital_referencia:r.edital_referencia||'', nota_minima:r.nota_minima||'',
+    corte: Math.round(+r.nota_corte_percentual) || 60, corteFonte: r.nota_corte_percentual ? 'edital' : 'estimada',
+    materias, dicas:r.dicas_banca||[], obs:r.observacoes||'', fontes:r.fontes||[] };
+}
+function usarConcurso(r){
+  const c = normalizaConcurso(r);
+  const existente = state.concursos.find(x=>x.nome.toLowerCase()===c.nome.toLowerCase());
+  if (existente){
+    // atualiza mantendo os ids das matérias com o mesmo nome (preserva o histórico)
+    c.materias.forEach(m=>{ const o = existente.materias.find(x=>x.nome.toLowerCase()===m.nome.toLowerCase()); if (o) m.id=o.id; });
+    c.id = existente.id; c.criado = existente.criado;
+    state.concursos = state.concursos.map(x=>x.id===c.id?c:x);
+  } else state.concursos.push(c);
+  state.ativo = c.id; search.res = null; save(); view='painel'; render(); window.scrollTo(0,0);
+  toast(existente ? 'Dados do edital atualizados.' : 'Concurso mapeado. Faça o diagnóstico para medir seu nível.');
+}
+function inscDias(c){ return c.inscricoes_fim ? daysBetween(today(), c.inscricoes_fim) : null; }
+function statusAtual(c){
+  let s = c.status;
+  if (s==='inscricoes_abertas' && c.inscricoes_fim && inscDias(c) < 0) s='encerrado';
+  return s;
+}
+function statusPill(s){ const x = STATUS[s]||STATUS.sem_previsao; return `<span class="pill ${x.c}"><i></i>${x.t}</span>`; }
+
+/* ============================ ESTATÍSTICAS ============================ */
+const recs = () => state.records.filter(r=>r.cid===state.ativo);
+function agg(list){ const t=list.reduce((a,r)=>a+r.t,0), c=list.reduce((a,r)=>a+r.c,0); return {t,c,acc:t?c/t:null}; }
+const matStats = mid => agg(recs().filter(r=>r.mid===mid));
+const assStats = (mid,a) => agg(recs().filter(r=>r.mid===mid && r.a===a));
+const pontos = m => (m.questoes||10)*(m.ppq||1);
+function projecao(){
+  const c = C(), ms = c.materias; if (!ms.length) return null;
+  const tot = ms.reduce((a,m)=>a+pontos(m),0), f = bancaF(c.banca);
+  let pts=0, cob=0, q=0;
+  ms.forEach(m=>{ const s=matStats(m.id); q+=s.t; if (s.t) cob+=pontos(m); pts += pontos(m)*(s.acc ?? .35)*f; });
+  const proj = pts/tot*100, prob = 1/(1+Math.exp(-(proj-c.corte)/5));
+  return { proj, prob, cob:cob/tot, q, tot, conf: q<40?'baixa':q<200?'média':'alta' };
+}
+function lastTrain(){ const d = recs().map(r=>r.date).sort(); return d.length ? d[d.length-1] : null; }
+
+function recomendacoes(){
+  const c = C(), out = [];
+  const d = inscDias(c);
+  if (statusAtual(c)==='inscricoes_abertas' && d!==null && d<=7) out.push({cor:'var(--mark)', t: d===0?'As inscrições terminam hoje':`Faltam ${d} dia${d>1?'s':''} para fechar as inscrições`, r:`Inscreva-se no site da banca ${c.banca} para não perder o prazo.`, btn: c.link_edital?{l:'Abrir site',href:c.link_edital}:null});
+  const lt = lastTrain();
+  if (lt && daysBetween(lt,today())>=3) out.push({cor:'var(--warn)', t:`Você está há ${daysBetween(lt,today())} dias sem treinar`, r:'Retome com 10 questões das suas matérias mais fracas para não perder o ritmo.', btn:{l:'Treino de retomada',fn:'treinoRetomada()'}});
+  const nunca = c.materias.filter(m=>!matStats(m.id).t);
+  if (nunca.length === c.materias.length) out.push({cor:'var(--mark)', t:'Faça o diagnóstico', r:`Questões rápidas de todas as ${c.materias.length} matérias para descobrir seu nível em cada uma.`, btn:{l:'Começar diagnóstico',fn:'treinoDiagnostico()'}});
+  else nunca.slice(0,2).forEach(m=>out.push({cor:'var(--mut)', t:`Teste seu nível em ${m.nome}`, r:`Vale ${num(pontos(m))} pontos e você ainda não respondeu nenhuma questão.`, btn:{l:'Testar matéria',fn:`treinoMateria('${m.id}')`}}));
+  // assuntos fracos com maior impacto
+  const fracos = [];
+  c.materias.forEach(m=>m.assuntos.forEach(a=>{ const s=assStats(m.id,a); if (s.t>=2 && s.acc<.6) fracos.push({m,a,s,score:pontos(m)*(1-s.acc)}); }));
+  fracos.sort((x,y)=>y.score-x.score).slice(0,3).forEach(f=>out.push({cor:'var(--bad)', t:`Reforce: ${f.a}`, r:`${f.m.nome} · você acerta ${pct(f.s.acc)}% (${f.s.c} de ${f.s.t}).`, btn:{l:'Treinar assunto',fn:`treinoAssunto('${f.m.id}',${attr(f.a)})`}, link:gsearch(f.a+' '+f.m.nome+' aula resumo concurso')}));
+  // matéria com maior ganho de pontos
+  const ganho = c.materias.map(m=>{ const s=matStats(m.id); return {m,s,g:pontos(m)*(1-(s.acc??.35))}; }).filter(x=>x.s.t).sort((a,b)=>b.g-a.g)[0];
+  if (ganho && ganho.s.acc<.8) out.push({cor:'var(--ok)', t:`Maior ganho de pontos: ${ganho.m.nome}`, r:`Subir de ${pct(ganho.s.acc)}% para 80% nela vale cerca de ${num(Math.round(pontos(ganho.m)*(.8-ganho.s.acc)*10)/10)} pontos na prova.`, btn:{l:'Treinar matéria',fn:`treinoMateria('${ganho.m.id}')`}});
+  // assuntos nunca testados na matéria de maior peso
+  const pesada = c.materias.slice().sort((a,b)=>pontos(b)-pontos(a))[0];
+  if (pesada && matStats(pesada.id).t){
+    const nt = pesada.assuntos.filter(a=>!assStats(pesada.id,a).t);
+    if (nt.length) out.push({cor:'var(--mut)', t:`Assunto ainda não testado: ${nt[0]}`, r:`É da matéria que mais vale pontos (${pesada.nome}).`, btn:{l:'Testar assunto',fn:`treinoAssunto('${pesada.id}',${attr(nt[0])})`}});
+  }
+  return out.slice(0,6);
+}
+
+/* ============================ RENDER ============================ */
+function go(v){ view=v; if (v!=='treinar' && quiz && quiz.done) quiz=null; render(); window.scrollTo(0,0); }
+function render(){
+  const c = C();
+  const V = {painel:vPainel, mapa:vMapa, treinar:vTreinar, buscar:vBuscar, perfil:vPerfil};
+  if (!c && !['buscar','perfil'].includes(view)) view='buscar';
+  const tabs=[['painel','Painel'],['mapa','Mapa'],['treinar','Treinar'],['buscar','Buscar'],['perfil','Perfil']];
+  $('#app').innerHTML = `<header class="top"><div class="logo"><span class="mk">C</span>Código do Concurso</div>${c?`<div class="cz">${esc(c.nome)}</div>`:''}</header>
+    <main>${V[view]()}</main>
+    <nav class="tabs">${tabs.map(([k,t])=>`<button class="${view===k?'on':''}" onclick="go('${k}')" aria-label="${t}">${ICON[k]}${t}</button>`).join('')}</nav>`;
+  if (view==='painel') requestAnimationFrame(()=>requestAnimationFrame(animRuler));
+}
+
+/* ---------- PAINEL ---------- */
+function vPainel(){
+  const c = C(), p = projecao(), st = statusAtual(c);
+  const dp = c.data_prova ? daysBetween(today(), c.data_prova) : null;
+  let h = `<div style="margin:18px 2px 0">
+    <div class="row" style="flex-wrap:wrap;gap:8px">${statusPill(st)}${c.banca?`<span class="pill">${esc(c.banca)}</span>`:''}${dp!==null&&dp>=0?`<span class="pill">Prova em ${dp} dia${dp===1?'':'s'}</span>`:''}</div>
+    <h2 style="margin-top:14px;font-size:27px">${esc(c.nome)}</h2>
+    ${c.orgao?`<p class="mut sm" style="margin-top:4px">${esc(c.orgao)}</p>`:''}</div>`;
+
+  if (p){
+    const pp = pct(p.prob), corPos = p.proj>=c.corte ? 'var(--ok)' : p.proj>=c.corte-10 ? 'var(--warn)' : 'var(--bad)';
+    h += `<div class="panel">
+      <div class="row between" style="align-items:flex-end">
+        <div><div class="mut sm">Chance estimada de passar do corte</div><div class="big">${p.q?pp:'—'}<small>${p.q?'%':''}</small></div></div>
+        <div style="text-align:right" class="xs mut">Confiança ${p.conf}<br>${p.q} questões</div>
+      </div>
+      <div class="ruler" id="ruler" data-me="${Math.min(100,Math.max(0,p.proj))}" data-cut="${c.corte}">
+        <div class="track"></div><div class="fill" style="background:${corPos}"></div>
+        <div class="cut" style="left:${c.corte}%"><span>corte ${c.corte}</span></div>
+        <div class="me" style="background:${corPos};border-top-color:${corPos}">você ${Math.round(p.proj)}</div>
+        <div class="scale"><span>0</span><span>50</span><span>100</span></div>
+      </div>
+      <p class="xs mut" style="margin-top:22px">Sua nota projetada em pontos (de 0 a 100), comparada à ${c.corteFonte==='edital'?'nota de corte ou mínima do edital':'nota de corte estimada'}. Leva em conta o peso de cada matéria e o nível da banca. Matérias ainda não testadas contam como 35%.</p>
+    </div>`;
+  }
+
+  const rs = recomendacoes();
+  h += `<div class="sec-t"><h2>O que fazer agora</h2></div><div class="panel flat" style="margin-top:0">
+    ${rs.length ? rs.map(r=>`<div class="step"><span class="dot" style="background:${r.cor}"></span><div class="grow"><b>${esc(r.t)}</b><p class="mut sm" style="margin:2px 0 0">${esc(r.r)}</p>
+      ${r.btn||r.link?`<div class="row" style="gap:8px;flex-wrap:wrap">${r.btn?(r.btn.href?`<a class="btn small" href="${esc(r.btn.href)}" target="_blank" rel="noopener">${esc(r.btn.l)}</a>`:`<button class="btn small" onclick="${r.btn.fn}">${esc(r.btn.l)}</button>`):''}${r.link?`<a class="btn small ghost" href="${esc(r.link)}" target="_blank" rel="noopener">Ver aula</a>`:''}</div>`:''}</div></div>`).join('')
+      : '<p class="mut">Tudo em dia. Faça um treino geral para manter o nível.</p>'}
+  </div>`;
+
+  h += `<div class="sec-t"><h2>Matérias</h2><span class="xs mut">acerto · valor na prova</span></div><div class="panel flat" style="margin-top:0">
+    ${c.materias.map(m=>{ const s=matStats(m.id); return `<div class="mrow" onclick="go('mapa')" style="cursor:pointer">
+      <div class="row between"><b class="grow" style="font-weight:600">${esc(m.nome)}</b><b style="color:${accColor(s.acc)};font-family:var(--disp)">${s.acc===null?'—':pct(s.acc)+'%'}</b></div>
+      <div class="xs mut">${m.questoes?m.questoes+' questões · ':''}${num(pontos(m))} pts${s.t?` · ${s.c}/${s.t} acertos`:''}</div>
+      <div class="bar"><i style="width:${s.acc===null?0:pct(s.acc)}%;background:${accColor(s.acc)}"></i></div></div>`; }).join('')}
+  </div>`;
+  return h;
+}
+function animRuler(){
+  const r = $('#ruler'); if (!r) return;
+  const me = +r.dataset.me;
+  r.querySelector('.fill').style.width = me+'%';
+  r.querySelector('.me').style.left = me+'%';
+}
+
+/* ---------- MAPA ---------- */
+function vMapa(){
+  const c = C();
+  return `<div style="margin:18px 2px 6px"><h2 style="font-size:27px">Mapa do edital</h2>
+    <p class="mut sm">Cada assunto ganha uma cor conforme seus acertos. Toque em um assunto para treinar só ele.</p>
+    <div class="legend" style="margin-top:10px"><span style="--c:var(--bad)">abaixo de 50%</span><span style="--c:var(--warn)">50 a 69%</span><span style="--c:var(--ok)">70% ou mais</span><span class="nd">sem dados</span></div></div>
+    ${c.materias.map(m=>{ const s=matStats(m.id); return `<div class="panel">
+      <div class="row between"><h3 class="grow">${esc(m.nome)}</h3><b style="font-family:var(--disp);font-size:20px;color:${accColor(s.acc)}">${s.acc===null?'—':pct(s.acc)+'%'}</b></div>
+      <div class="xs mut" style="margin-top:4px">${m.questoes?m.questoes+' questões · ':''}${num(pontos(m))} pontos</div>
+      <div class="chips">${m.assuntos.map(a=>{ const x=assStats(m.id,a); return `<button class="chip ${accClass(x.acc)}" onclick="abrirAssunto('${m.id}',${attr(a)})">${esc(a)}${x.t?`<em>${pct(x.acc)}%</em>`:''}</button>`; }).join('')}</div>
+      <div class="btns"><button class="btn small" onclick="treinoMateria('${m.id}')">Treinar matéria</button><button class="btn small ghost" onclick="editarMateria('${m.id}')">Editar</button></div></div>`; }).join('')}
+    <button class="btn block ghost" onclick="editarMateria(null)">Adicionar matéria</button>`;
+}
+function abrirAssunto(mid,a){
+  const m = C().materias.find(x=>x.id===mid), s = assStats(mid,a);
+  modal(`<div class="xs mut">${esc(m.nome)}</div><h2 style="margin:4px 0 10px">${esc(a)}</h2>
+    <div class="kv"><div><b style="color:${accColor(s.acc)}">${s.acc===null?'—':pct(s.acc)+'%'}</b><span>acerto</span></div><div><b>${s.t}</b><span>questões respondidas</span></div></div>
+    <p class="mut sm" style="margin-top:14px">${s.acc===null?'Você ainda não foi avaliado neste assunto.':s.acc<.5?'Ponto fraco: revise a teoria e treine de novo.':s.acc<.7?'Quase lá: mais um treino deve firmar o assunto.':'Assunto dominado. Revise de vez em quando.'}</p>
+    <button class="btn block" style="margin-top:8px" onclick="closeModal();treinoAssunto('${mid}',${attr(a)})">Treinar este assunto</button>
+    <a class="btn block ghost" style="margin-top:10px" target="_blank" rel="noopener" href="${gsearch(a+' '+m.nome+' aula resumo concurso')}">Buscar aula e resumo</a>
+    <button class="btn block ghost" style="margin-top:10px" onclick="registrar('${mid}',${attr(a)})">Registrar questões que fiz</button>`);
+}
+function editarMateria(id){
+  const m = id ? C().materias.find(x=>x.id===id) : {nome:'',questoes:10,ppq:1,assuntos:[]};
+  modal(`<h2 style="margin-bottom:6px">${id?'Editar matéria':'Nova matéria'}</h2>
+    <label class="f">Nome</label><input id="em-n" value="${esc(m.nome)}">
+    <div class="kv" style="margin-top:0;background:none"><div style="background:none;border:0;padding:0"><label class="f">Nº de questões</label><input id="em-q" type="number" inputmode="numeric" value="${m.questoes}"></div>
+    <div style="background:none;border:0;padding:0"><label class="f">Pontos por questão</label><input id="em-p" type="number" step="0.5" value="${m.ppq}"></div></div>
+    <label class="f">Assuntos (um por linha)</label><textarea id="em-a" rows="7">${esc(m.assuntos.join('\n'))}</textarea>
+    <button class="btn block" style="margin-top:16px" onclick="salvarMateria(${id?`'${id}'`:'null'})">Salvar</button>
+    ${id?`<button class="btn block ghost" style="margin-top:10px;color:var(--bad)" onclick="removerMateria('${id}')">Remover matéria</button>`:''}`);
+}
+function salvarMateria(id){
+  const nome=$('#em-n').value.trim(); if (!nome) return toast('Digite o nome da matéria.');
+  const d = {nome, questoes:+$('#em-q').value||0, ppq:+$('#em-p').value||1, assuntos:$('#em-a').value.split('\n').map(x=>x.trim()).filter(Boolean)};
+  const c=C(); if (id) Object.assign(c.materias.find(x=>x.id===id), d); else c.materias.push({id:'m'+uid(), ...d});
+  save(); closeModal(); render();
+}
+function removerMateria(id){ ask('Remover esta matéria do mapa?', ()=>{ const c=C(); c.materias=c.materias.filter(m=>m.id!==id); save(); render(); }); }
+
+/* ---------- TREINAR ---------- */
+function vTreinar(){
+  if (quiz) return quiz.loading ? vLoadingQ() : quiz.done ? vResultado() : vQuestao();
+  const c = C(), ses = state.sessions.filter(s=>s.cid===c.id);
+  return `<div style="margin:18px 2px 6px"><h2 style="font-size:27px">Treinar</h2><p class="mut sm">Questões no estilo da banca ${esc(c.banca)}. Cada resposta atualiza seu mapa e sua chance.</p></div>
+    <div class="panel"><h3>Diagnóstico completo</h3><p class="mut sm">Questões de todas as matérias do edital. Refaça a cada duas semanas para ver sua evolução.</p>
+      <button class="btn block" style="margin-top:10px" onclick="treinoDiagnostico()">Começar diagnóstico</button></div>
+    <div class="panel flat"><h3>Por matéria</h3>${c.materias.map(m=>{ const s=matStats(m.id); return `<div class="mrow row between"><div class="grow"><div style="font-weight:600">${esc(m.nome)}</div><div class="xs mut">${s.t?`${pct(s.acc)}% de acerto`:'ainda não testada'}</div></div><button class="btn small soft" onclick="treinoMateria('${m.id}')">Treinar</button></div>`; }).join('')}</div>
+    <div class="panel flat"><h3>Resolveu questões em outro lugar?</h3><p class="mut sm">Registre os acertos de provas anteriores ou sites de questões. Isso deixa sua chance de aprovação mais precisa.</p>
+      <div class="btns"><button class="btn small soft" onclick="registrar()">Registrar acertos</button><a class="btn small ghost" target="_blank" rel="noopener" href="${gsearch('provas anteriores '+c.banca+' '+(c.cargo||c.nome)+' pdf gabarito')}">Provas anteriores</a></div></div>
+    ${ses.length?`<div class="sec-t"><h2>Histórico</h2></div><div class="panel flat" style="margin-top:0">${ses.slice(-10).reverse().map(s=>`<div class="mrow row between"><div><div style="font-weight:600">${esc(s.nome)}</div><div class="xs mut">${fmtDate(s.date)}</div></div><b style="font-family:var(--disp);color:${accColor(s.c/s.t)}">${s.c}/${s.t}</b></div>`).join('')}</div>`:''}`;
+}
+function vLoadingQ(){ return `<div class="loader"><div class="scan"></div><b>Montando suas questões</b><p class="mut sm">Questões no estilo ${esc(C().banca)} sobre ${esc(quiz.titulo)}.</p></div>`; }
+
+function localQs(m, assunto, n){
+  let pool = []; bankTags(m.nome).forEach(t=>pool.push(...BANK[t]));
+  if (assunto){ const f = pool.filter(q=>q.a.toLowerCase()===assunto.toLowerCase()); if (f.length) pool=f; }
+  return shuffle(pool).slice(0,n).map(q=>({mid:m.id, a:assunto || matchAssunto(m,q.a), q:q.q, o:q.o, c:q.c, e:q.e, local:true}));
+}
+function matchAssunto(m, a){
+  const low = a.toLowerCase(), w = low.split(/[^a-zà-ú0-9]+/).filter(x=>x.length>3);
+  return m.assuntos.find(x=>x.toLowerCase()===low) || m.assuntos.find(x=>w.some(k=>x.toLowerCase().includes(k))) || a;
+}
+async function gerar(m, assuntos, n){
+  const c = C();
+  try{
+    const r = await api('questoes', {concurso:c.nome, banca:c.banca, materia:m.nome, assuntos, n});
+    return r.questoes.map(q=>({mid:m.id, a:matchAssunto(m,q.assunto||assuntos[0]), q:q.enunciado, o:q.alternativas, c:q.correta, e:q.explicacao||''}));
+  }catch(e){ return null; }
+}
+async function iniciarTreino(titulo, plano){
+  quiz = {titulo, loading:true}; view='treinar'; render(); window.scrollTo(0,0);
+  const res = await Promise.all(plano.map(p=>gerar(p.m, p.assuntos, p.n)));
+  let qs = [], offline = false;
+  res.forEach((r,i)=>{ if (r && r.length) qs.push(...r); else { offline=true; qs.push(...localQs(plano[i].m, plano[i].assuntos.length===1?plano[i].assuntos[0]:null, plano[i].n)); } });
+  if (!qs.length){ quiz=null; render(); return toast('Ainda não há questões para esta matéria sem a IA ligada. Veja o README para ativar.'); }
+  if (offline) toast('IA indisponível agora: usando o banco interno de questões.');
+  quiz = {titulo, qs: plano.length>1 ? shuffle(qs) : qs, i:0, picked:null, ans:[], done:false};
+  render();
+}
+function treinoDiagnostico(){ const c=C(); const n = c.materias.length>6?2:3; iniciarTreino('Diagnóstico', c.materias.map(m=>({m, assuntos:m.assuntos.slice(0,8), n}))); }
+function treinoMateria(mid){ const m=C().materias.find(x=>x.id===mid); iniciarTreino(m.nome, [{m, assuntos:m.assuntos, n:10}]); }
+function treinoAssunto(mid,a){ const m=C().materias.find(x=>x.id===mid); iniciarTreino(a, [{m, assuntos:[a], n:6}]); }
+function treinoRetomada(){
+  const c=C(); const ms = c.materias.map(m=>({m,s:matStats(m.id)})).sort((x,y)=>(x.s.acc??.35)-(y.s.acc??.35)).slice(0,3);
+  iniciarTreino('Retomada', ms.map(x=>({m:x.m, assuntos:x.m.assuntos, n:4})));
+}
+function vQuestao(){
+  const q = quiz.qs[quiz.i], m = C().materias.find(x=>x.id===q.mid), L='ABCDE';
+  return `<div class="qhead" style="margin-top:16px"><span class="xs mut">${esc(quiz.titulo)} · ${quiz.i+1} de ${quiz.qs.length}</span><button class="btn small ghost" onclick="sairTreino()">Sair</button></div>
+    <div class="prog"><i style="width:${pct(quiz.i/quiz.qs.length)}%"></i></div>
+    <div class="panel"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="pill">${esc(m?.nome||'')}</span><span class="pill st-off">${esc(q.a)}</span></div>
+      <p class="qtext">${esc(q.q)}</p>
+      ${q.o.map((o,k)=>{ let cl=''; if (quiz.picked!==null){ if (k===q.c) cl='right'; else if (k===quiz.picked) cl='wrong'; }
+        return `<button class="opt ${cl}" ${quiz.picked!==null?'disabled':''} onclick="responder(${k})"><span class="l">${L[k]||k+1}</span><span>${esc(o)}</span></button>`; }).join('')}
+      ${quiz.picked!==null?`<div class="expl"><b>${quiz.picked===q.c?'Você acertou.':'Resposta certa: '+L[q.c]+'.'}</b> <span class="mut">${esc(q.e)}</span></div>
+        <button class="btn block" style="margin-top:12px" onclick="proxima()">${quiz.i+1<quiz.qs.length?'Próxima questão':'Ver resultado'}</button>
+        ${q.local?'':`<button class="btn block ghost small" style="margin-top:8px" onclick="anular()">Esta questão está errada: anular</button>`}`:''}
+    </div>`;
+}
+function responder(k){
+  const q = quiz.qs[quiz.i]; quiz.picked = k;
+  const r = {id:uid(), cid:state.ativo, date:today(), mid:q.mid, a:q.a, t:1, c:k===q.c?1:0};
+  state.records.push(r); q.rid = r.id; quiz.ans.push({mid:q.mid, ok:k===q.c, rid:r.id});
+  save(); render();
+}
+function anular(){
+  const q = quiz.qs[quiz.i];
+  state.records = state.records.filter(r=>r.id!==q.rid); quiz.ans = quiz.ans.filter(a=>a.rid!==q.rid);
+  save(); toast('Questão anulada: não conta no seu desempenho.'); proxima();
+}
+function proxima(){ quiz.picked=null; quiz.i++; if (quiz.i>=quiz.qs.length) fimTreino(); render(); window.scrollTo(0,0); }
+function sairTreino(){ if (quiz && quiz.ans.length) fimTreino(); quiz=null; render(); }
+function fimTreino(){
+  quiz.done = true;
+  if (quiz.ans.length) state.sessions.push({cid:state.ativo, date:today(), nome:quiz.titulo, t:quiz.ans.length, c:quiz.ans.filter(a=>a.ok).length});
+  save();
+}
+function vResultado(){
+  const t = quiz.ans.length, c = quiz.ans.filter(a=>a.ok).length, p = t?c/t:0;
+  const by = {}; quiz.ans.forEach(a=>{ by[a.mid] ||= {t:0,c:0}; by[a.mid].t++; if (a.ok) by[a.mid].c++; });
+  const ms = C().materias;
+  return `<div class="panel" style="margin-top:20px;text-align:center"><div class="mut sm">${esc(quiz.titulo)}</div>
+    <div class="big" style="color:${accColor(p)};margin:10px 0">${c}<small style="color:var(--mut)"> de ${t}</small></div>
+    <p>${p>=.75?'Ótimo resultado. Esses assuntos estão firmes.':p>=.5?'Bom caminho. Os assuntos em que você errou já foram marcados no mapa.':'Agora você sabe onde focar. O painel já mostra o que reforçar primeiro.'}</p></div>
+    <div class="panel flat">${Object.entries(by).map(([mid,v])=>`<div class="mrow"><div class="row between"><span>${esc(ms.find(m=>m.id===mid)?.nome||'')}</span><b style="font-family:var(--disp)">${v.c}/${v.t}</b></div><div class="bar"><i style="width:${pct(v.c/v.t)}%;background:${accColor(v.c/v.t)}"></i></div></div>`).join('')}</div>
+    <button class="btn block" onclick="quiz=null;go('painel')">Ver o que fazer agora</button>
+    <button class="btn block ghost" style="margin-top:10px" onclick="quiz=null;go('mapa')">Abrir mapa do edital</button>`;
+}
+function registrar(mid, a){
+  const c = C(), m0 = c.materias.find(x=>x.id===mid) || c.materias[0];
+  modal(`<h2 style="margin-bottom:4px">Registrar acertos</h2><p class="mut sm">Questões que você resolveu fora do app.</p>
+    <label class="f">Matéria</label><select id="rg-m" onchange="rgAss()">${c.materias.map(m=>`<option value="${m.id}" ${m.id===m0.id?'selected':''}>${esc(m.nome)}</option>`).join('')}</select>
+    <label class="f">Assunto</label><select id="rg-a"></select>
+    <div class="kv" style="margin-top:0"><div style="background:none;border:0;padding:0"><label class="f">Questões feitas</label><input id="rg-t" type="number" inputmode="numeric"></div>
+    <div style="background:none;border:0;padding:0"><label class="f">Acertos</label><input id="rg-c" type="number" inputmode="numeric"></div></div>
+    <button class="btn block" style="margin-top:16px" onclick="salvarRegistro()">Salvar</button>`);
+  rgAss(a);
+}
+function rgAss(a){ const m = C().materias.find(x=>x.id===$('#rg-m').value); $('#rg-a').innerHTML = '<option value="">Vários assuntos</option>'+m.assuntos.map(x=>`<option ${x===a?'selected':''}>${esc(x)}</option>`).join(''); }
+function salvarRegistro(){
+  const t = Math.max(0,+$('#rg-t').value||0), c = Math.min(t, Math.max(0,+$('#rg-c').value||0));
+  if (!t) return toast('Informe quantas questões você fez.');
+  state.records.push({id:uid(), cid:state.ativo, date:today(), mid:$('#rg-m').value, a:$('#rg-a').value||'Geral', t, c, manual:true});
+  save(); closeModal(); render(); toast('Acertos registrados.');
+}
+
+/* ---------- BUSCAR ---------- */
+function vBuscar(){
+  const c = C();
+  let h = `<div style="margin:18px 2px 6px"><h2 style="font-size:27px">${c?'Buscar concurso':'Qual concurso você quer passar?'}</h2>
+    <p class="mut sm">Escreva o cargo e o órgão. O app procura o edital mais recente, a banca, as datas, as matérias e os assuntos.</p></div>
+    <div class="panel">
+      <label class="f" style="margin-top:0" for="q">Concurso</label>
+      <div class="search"><input id="q" placeholder="Ex.: Guarda Municipal de São Gonçalo" value="${esc(search.q||'')}" onkeydown="if(event.key==='Enter')buscar()">
+      <select id="uf" aria-label="Estado"><option value="">UF</option>${UFS.map(u=>`<option ${u===(search.uf||'')?'selected':''}>${u}</option>`).join('')}</select></div>
+      <button class="btn block" style="margin-top:12px" onclick="buscar()" ${search.busy?'disabled':''}>Buscar edital</button>
+      <button class="btn block ghost" style="margin-top:10px" onclick="abertos()" ${search.busy?'disabled':''}>Ver concursos abertos no estado</button>
+    </div>`;
+  if (search.busy) h += `<div class="loader"><div class="scan"></div><b id="ldt">Procurando o edital…</b><p class="mut sm">Isso pode levar até um minuto.</p></div>`;
+  else if (search.err) h += search.err==='offline' ? `<div class="panel flat"><h3>A busca automática ainda não está ligada</h3>
+      <p class="mut sm">Ela funciona quando o site é publicado com a chave de IA (passo a passo no README). Enquanto isso, veja como fica com um concurso real ou monte o seu manualmente.</p>
+      <div class="btns"><button class="btn small" onclick="verExemplo()">Ver exemplo: Guarda de São Gonçalo</button><button class="btn small ghost" onclick="manual()">Montar manualmente</button></div></div>`
+    : `<div class="panel flat"><h3>Não deu certo</h3><p class="mut sm">${esc(search.err)}</p><button class="btn small" onclick="buscar()">Tentar de novo</button></div>`;
+  else if (search.res) h += vResultadoBusca(search.res);
+  else if (search.list) h += vLista(search.list);
+  else if (!c) h += `<div class="empty"><p class="mut sm">Não sabe por onde começar?</p><button class="btn small ghost" onclick="verExemplo()">Ver um exemplo real</button></div>`;
+  return h;
+}
+let ldTimer=null;
+function loadingTexts(lista){
+  clearInterval(ldTimer); let i=0;
+  ldTimer = setInterval(()=>{ const el=$('#ldt'); if (!el || !search.busy) return clearInterval(ldTimer); i=(i+1)%lista.length; el.textContent=lista[i]; }, 2600);
+}
+async function buscar(){
+  const q = $('#q').value.trim(), uf = $('#uf').value;
+  if (!q) return toast('Digite o nome do concurso.');
+  search = {q, uf, busy:true}; render();
+  loadingTexts(['Procurando o edital…','Conferindo se está aberto…','Lendo o quadro de provas…','Mapeando os assuntos…','Conferindo a banca…']);
+  try{
+    const r = await api('concurso', {query:q, uf});
+    search = {q, uf, busy:false, res: r.encontrado===false ? null : r, err: r.encontrado===false ? (r.observacoes||'Não encontrei esse concurso. Tente escrever o cargo e a cidade ou o órgão.') : null};
+  }catch(e){ search = {q, uf, busy:false, err:e.message}; }
+  render();
+}
+async function abertos(){
+  const uf = $('#uf').value, q = $('#q').value.trim();
+  if (!uf) return toast('Escolha o estado (UF).');
+  search = {q, uf, busy:true}; render();
+  loadingTexts(['Procurando concursos abertos…','Conferindo datas de inscrição…','Organizando a lista…']);
+  try{ const r = await api('abertos', {uf, area:q}); search = {q, uf, busy:false, list:r}; }
+  catch(e){ search = {q, uf, busy:false, err:e.message}; }
+  render();
+}
+function verExemplo(){ search = {q:'Guarda Municipal de São Gonçalo', uf:'RJ', busy:false, res:EXEMPLO}; render(); }
+function vLista(r){
+  const l = r.concursos||[];
+  return `<div class="sec-t"><h2>${l.length} concursos em ${esc(search.uf)}</h2></div>
+    ${l.map((x,i)=>`<button class="list-item" onclick="detalhar(${i})"><div class="row between" style="align-items:flex-start"><b class="grow" style="font-family:var(--disp);font-size:17px">${esc(x.nome)}</b>${statusPill(x.status==='inscricoes_abertas'&&x.inscricoes_fim&&daysBetween(today(),x.inscricoes_fim)<0?'encerrado':x.status)}</div>
+      <div class="sm mut" style="margin-top:6px">${[x.cargos,x.banca,x.vagas&&x.vagas+' vagas',x.salario].filter(Boolean).map(esc).join('  |  ')}</div>
+      ${x.inscricoes_fim?`<div class="xs" style="margin-top:6px">Inscrições até ${fmtDate(x.inscricoes_fim)}</div>`:''}</button>`).join('')}
+    ${fontesHtml(r.fontes)}`;
+}
+function detalhar(i){ const x = search.list.concursos[i]; $('#q') && ($('#q').value = x.nome); buscar(); }
+function fontesHtml(f){ return f && f.length ? `<div class="src" style="margin-top:10px"><div class="xs mut" style="margin-bottom:4px">Fontes</div>${f.map(s=>`<a href="${esc(s.uri)}" target="_blank" rel="noopener">${esc(s.title||s.uri)}</a>`).join('')}</div>` : ''; }
+function vResultadoBusca(r){
+  const st = statusAtual({status:r.status, inscricoes_fim:r.inscricoes_fim});
+  const tot = (r.materias||[]).reduce((a,m)=>a+(+m.questoes||0),0);
+  return `<div class="panel">
+    <div class="row" style="flex-wrap:wrap;gap:8px">${statusPill(st)}${r.edital_referencia?`<span class="pill">${esc(r.edital_referencia)}</span>`:''}</div>
+    <h2 style="margin-top:14px">${esc(r.nome)}</h2>${r.orgao?`<p class="mut sm">${esc(r.orgao)}</p>`:''}
+    <div class="facts">
+      ${[['Banca',r.banca],['Vagas',r.vagas],['Salário',r.salario],['Taxa',r.taxa],['Inscrições',r.inscricoes_fim?`até ${fmtDate(r.inscricoes_fim)}`:''],['Prova',fmtDate(r.data_prova)],['Escolaridade',r.escolaridade],['Aprovação',r.nota_minima]]
+        .filter(x=>x[1]).map(([k,v])=>`<div><span>${k}</span><b>${esc(v)}</b></div>`).join('')}
+    </div>
+    ${r.observacoes?`<p class="sm" style="margin-top:14px;border-left:3px solid var(--mark);padding-left:10px">${esc(r.observacoes)}</p>`:''}
+    <h3 style="margin-top:22px">Matérias da prova${tot?` · ${tot} questões`:''}</h3>
+    ${(r.materias||[]).map(m=>`<div class="mat"><div class="row between"><b style="font-weight:600">${esc(m.nome)}</b><span class="xs mut">${m.questoes?m.questoes+' q':''}${(+m.pontos_por_questao||1)!==1?' · peso '+num(m.pontos_por_questao):''}</span></div>
+      <div class="xs mut" style="margin-top:4px">${(m.assuntos||[]).slice(0,5).map(esc).join(', ')}${(m.assuntos||[]).length>5?` e mais ${m.assuntos.length-5}`:''}</div></div>`).join('') || '<p class="mut sm">Matérias não encontradas. Você pode adicionar no mapa depois.</p>'}
+    ${r.outros_cargos&&r.outros_cargos.length?`<p class="xs mut" style="margin-top:12px">Outros cargos neste concurso: ${r.outros_cargos.map(esc).join(', ')}. Para mapear outro cargo, busque pelo nome dele.</p>`:''}
+    <button class="btn block" style="margin-top:18px" onclick="usarConcurso(search.res)">Estudar para este concurso</button>
+    ${r.link_edital?`<a class="btn block ghost" style="margin-top:10px" href="${esc(r.link_edital)}" target="_blank" rel="noopener">Abrir edital / site oficial</a>`:''}
+    ${fontesHtml(r.fontes)}
+  </div>`;
+}
+function manual(){
+  modal(`<h2 style="margin-bottom:6px">Montar manualmente</h2><p class="mut sm">Você pode completar matérias e assuntos depois, no mapa.</p>
+    <label class="f">Nome do concurso</label><input id="mn-n" value="${esc(search.q||'')}">
+    <label class="f">Banca</label><input id="mn-b" placeholder="Ex.: FGV">
+    <label class="f">Data da prova</label><input id="mn-d" type="date">
+    <label class="f">Matérias (uma por linha)</label><textarea id="mn-m" rows="5" placeholder="Língua Portuguesa&#10;Informática"></textarea>
+    <button class="btn block" style="margin-top:16px" onclick="salvarManual()">Criar mapa</button>`);
+}
+function salvarManual(){
+  const nome = $('#mn-n').value.trim(); if (!nome) return toast('Digite o nome do concurso.');
+  const mats = $('#mn-m').value.split('\n').map(x=>x.trim()).filter(Boolean);
+  closeModal();
+  usarConcurso({nome, banca:$('#mn-b').value.trim(), data_prova:$('#mn-d').value, uf:search.uf||'', status:'sem_previsao',
+    materias: mats.map(n=>({nome:n, questoes:10, pontos_por_questao:1, assuntos:[]}))});
+}
+
+/* ---------- PERFIL ---------- */
+function vPerfil(){
+  const c = C();
+  return `<div style="margin:18px 2px 6px"><h2 style="font-size:27px">${esc(state.nome||'Seu perfil')}</h2><p class="mut sm">${user?esc(user.email)+' · progresso salvo na nuvem':'Progresso salvo neste aparelho'}</p></div>
+    ${c?`<div class="panel"><h3>${esc(c.nome)}</h3>
+      <div class="facts">${[['Banca',c.banca],['Vagas',c.vagas],['Salário',c.salario],['Prova',fmtDate(c.data_prova)],['Inscrições',c.inscricoes_fim?'até '+fmtDate(c.inscricoes_fim):''],['Edital',c.edital_referencia]].filter(x=>x[1]).map(([k,v])=>`<div><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
+      <label class="f">Nota de corte usada no cálculo (% dos pontos)</label>
+      <div class="search"><input id="pf-c" type="number" min="1" max="100" value="${c.corte}"><button class="btn small soft" onclick="salvarCorte()">Salvar</button></div>
+      <p class="xs mut" style="margin-top:6px">${c.corteFonte==='edital'?'Valor tirado do edital ou do último concurso.':'Valor estimado. Se souber a nota de corte do último concurso, coloque aqui.'}</p>
+      ${c.dicas.length?`<h3 style="margin-top:20px">Como a banca cobra</h3><ul style="padding-left:18px;margin:8px 0">${c.dicas.map(d=>`<li class="sm" style="margin:6px 0">${esc(d)}</li>`).join('')}</ul>`:''}
+      <div class="btns"><button class="btn small" onclick="atualizarEdital()">Atualizar dados do edital</button>${c.link_edital?`<a class="btn small ghost" href="${esc(c.link_edital)}" target="_blank" rel="noopener">Site oficial</a>`:''}</div>
+      ${fontesHtml(c.fontes)}</div>`:''}
+    ${state.concursos.length>1?`<div class="panel flat"><h3>Meus concursos</h3>${state.concursos.map(x=>`<div class="mrow row between"><span class="grow">${esc(x.nome)}</span>${x.id===state.ativo?'<span class="pill st-aberto">ativo</span>':`<button class="btn small soft" onclick="trocar('${x.id}')">Abrir</button>`}</div>`).join('')}</div>`:''}
+    <div class="panel flat"><label class="f" style="margin-top:0">Seu nome</label><div class="search"><input id="pf-n" value="${esc(state.nome)}"><button class="btn small soft" onclick="state.nome=$('#pf-n').value.trim();save();render()">Salvar</button></div>
+      <div class="btns"><button class="btn small soft" onclick="go('buscar')">Adicionar outro concurso</button><button class="btn small soft" onclick="backup()">Copiar backup</button><button class="btn small soft" onclick="restaurar()">Restaurar backup</button></div>
+      <button class="btn block ghost" style="margin-top:14px" onclick="logout()">Sair</button></div>`;
+}
+function salvarCorte(){ const v = Math.min(100,Math.max(1,+$('#pf-c').value||60)); const c=C(); c.corte=v; c.corteFonte='usuario'; save(); toast('Nota de corte atualizada.'); render(); }
+function trocar(id){ state.ativo=id; save(); go('painel'); }
+async function atualizarEdital(){
+  const c = C(); search = {q:c.cargo&&c.orgao?`${c.cargo} ${c.orgao}`:c.nome, uf:c.uf}; view='buscar'; render();
+  $('#q').value = search.q; buscar();
+}
+async function backup(){
+  const txt = JSON.stringify(state);
+  try{ await navigator.clipboard.writeText(txt); toast('Backup copiado. Cole em um bloco de notas para guardar.'); }
+  catch(e){ modal(`<h2>Backup</h2><p class="mut sm">Copie todo o texto abaixo e guarde.</p><textarea rows="8" onclick="this.select()">${esc(txt)}</textarea>`); }
+}
+function restaurar(){
+  modal(`<h2>Restaurar backup</h2><p class="mut sm">Cole o texto do backup. Seus dados atuais neste perfil serão substituídos.</p><textarea id="rs-t" rows="8"></textarea>
+    <button class="btn block" style="margin-top:14px" onclick="fazerRestauro()">Restaurar</button>`);
+}
+function fazerRestauro(){ try{ const s = JSON.parse($('#rs-t').value); if (!s.concursos) throw 0; state=s; save(); closeModal(); boot(); toast('Backup restaurado.'); }catch(e){ toast('Texto de backup inválido.'); } }
+
+/* ---------- MODAL / TOAST ---------- */
+function modal(html){ $('#modalBox').innerHTML = `<div class="modal" onclick="if(event.target===this)closeModal()"><div class="sheet" role="dialog"><div class="grab"></div>${html}</div></div>`; }
+function closeModal(){ $('#modalBox').innerHTML=''; }
+function toast(msg){ document.querySelectorAll('.toast').forEach(t=>t.remove()); const d=document.createElement('div'); d.className='toast'; d.textContent=msg; document.body.appendChild(d); setTimeout(()=>d.remove(), 3800); }
+function ask(msg, fn){ modal(`<h2 style="margin-bottom:8px">Confirmar</h2><p>${esc(msg)}</p><button class="btn block" id="ask-y" style="margin-top:14px">Confirmar</button><button class="btn block ghost" style="margin-top:10px" onclick="closeModal()">Cancelar</button>`); $('#ask-y').onclick=()=>{ closeModal(); fn(); }; }
+
+start();
+</script>
+</body>
+</html>
